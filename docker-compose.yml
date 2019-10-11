@@ -3,28 +3,73 @@ services:
   nginx:
     container_name: node-nginx-lb
     build: ./nginx
+    ports:
+      - 3002:80
     links:
       - app-1:app-1
       - app-2:app-2
       - app-3:app-3
-    ports:
-      - 3002:80
     depends_on:
       - app-1
       - app-2
       - app-3
+    restart: always
+    networks:
+      - backend
+
+  mongodb:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb:/data/db
+    restart: always
+    networks:
+      - backend
+
   app-1:
     container_name: node-nginx-1
     image: node-nginx
     ports:
       - 3002
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    restart: always
+    networks:
+      - backend
+
   app-2:
     container_name: node-nginx-2
     image: node-nginx
     ports:
       - 3002
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    restart: always
+    networks:
+      - backend
+
   app-3:
     container_name: node-nginx-3
     image: node-nginx
     ports:
       - 3002
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    restart: always
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  mongodb:
