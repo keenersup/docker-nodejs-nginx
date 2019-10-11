@@ -1,0 +1,9 @@
+logs
+*.log
+node_modules/
+build/
+dist/
+.env
+.idea
+.tmp
+.DS_Store
